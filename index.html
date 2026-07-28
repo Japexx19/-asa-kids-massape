@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel Asa Kids</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:0;
+}
+
+header{
+background:#ffcc00;
+padding:20px;
+text-align:center;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 3px 8px #ccc;
+
+}
+
+.disponivel{
+color:green;
+font-weight:bold;
+}
+
+.alugado{
+color:red;
+font-weight:bold;
+}
+
+
+button{
+
+padding:12px;
+width:100%;
+border:none;
+border-radius:8px;
+background:#ff6600;
+color:white;
+font-size:16px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>🔐 Painel Asa Kids</h1>
+<p>Controle dos triciclos</p>
+
+</header>
+
+
+
+<div class="container">
+
+
+
+<div class="card">
+
+<h2>Triciclo 01</h2>
+
+<p id="status1" class="disponivel">
+🟢 Disponível
+</p>
+
+<p id="tempo1"></p>
+
+<button onclick="alugar(1)">
+Iniciar aluguel
+</button>
+
+<button onclick="interromper(1)">
+Interromper aluguel
+</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Triciclo 02</h2>
+
+<p id="status2" class="disponivel">
+🟢 Disponível
+</p>
+
+<p id="tempo2"></p>
+
+<button onclick="alugar(2)">
+Iniciar aluguel
+</button>
+
+<button onclick="interromper(2)">
+Interromper aluguel
+</button>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>Triciclo 03</h2>
+
+<p id="status3" class="disponivel">
+🟢 Disponível
+</p>
+
+<p id="tempo3"></p>
+
+<button onclick="alugar(3)">
+Iniciar aluguel
+</button>
+
+<button onclick="interromper(3)">
+Interromper aluguel
+</button>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>Triciclo 04</h2>
+
+<p id="status4" class="disponivel">
+🟢 Disponível
+</p>
+
+<p id="tempo4"></p>
+
+<button onclick="alugar(4)">
+Iniciar aluguel
+</button>
+
+<button onclick="interromper(4)">
+Interromper aluguel
+</button>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h2>Triciclo 05</h2>
+
+<p id="status5" class="disponivel">
+🟢 Disponível
+</p>
+
+<p id="tempo5"></p>
+
+<button onclick="alugar(5)">
+Iniciar aluguel
+</button>
+
+<button onclick="interromper(5)">
+Interromper aluguel
+</button>
+
+</div>
+
+
+
+</div>
+
+
+
+<script>
+
+let contadores = {};
+
+
+function alugar(numero){
+
+let minutos = 10;
+let segundos = minutos * 60;
+
+
+document.getElementById("status"+numero).innerHTML="🔴 Alugado";
+
+document.getElementById("status"+numero).className="alugado";
+
+
+contadores[numero] = setInterval(function(){
+
+
+let min=Math.floor(segundos/60);
+
+let seg=segundos%60;
+
+
+document.getElementById("tempo"+numero).innerHTML =
+"⏱️ Tempo restante: "+min+":"+(seg < 10 ? "0":"")+seg;
+
+
+segundos--;
+
+
+if(segundos < 0){
+
+interromper(numero);
+
+}
+
+
+},1000);
+
+
+}
+
+
+
+function interromper(numero){
+
+clearInterval(contadores[numero]);
+
+
+document.getElementById("status"+numero).innerHTML="🟢 Disponível";
+
+document.getElementById("status"+numero).className="disponivel";
+
+document.getElementById("tempo"+numero).innerHTML="Aluguel encerrado";
+
+
+}
+
+
+</script>
+
+</body>
+</html>
