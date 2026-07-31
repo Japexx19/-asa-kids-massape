@@ -396,12 +396,12 @@ button{
             ▶️ Retomar
         </button>
 
-        <button id="btnEncerrar1"
-                class="btn-encerrar"
-                onclick="interromper(1)"
-                style="display:none;">
-            Encerrar aluguel
-        </button>
+<button id="btnEncerrar1"
+        class="btn-encerrar"
+        onclick="interromper(1, true)"
+        style="display:none;">
+    Encerrar aluguel
+</button>
 
     </div>
 
@@ -464,12 +464,12 @@ button{
             ▶️ Retomar
         </button>
 
-        <button id="btnEncerrar2"
-                class="btn-encerrar"
-                onclick="interromper(2)"
-                style="display:none;">
-            Encerrar aluguel
-        </button>
+<button id="btnEncerrar2"
+        class="btn-encerrar"
+        onclick="interromper(2, true)"
+        style="display:none;">
+    Encerrar aluguel
+</button>
 
     </div>
 
@@ -536,7 +536,7 @@ button{
 
         <button id="btnEncerrar3"
                 class="btn-encerrar"
-                onclick="interromper(3)"
+                onclick="interromper(3, true)"
                 style="display:none;">
             Encerrar aluguel
         </button>
@@ -604,7 +604,7 @@ button{
 
         <button id="btnEncerrar4"
                 class="btn-encerrar"
-                onclick="interromper(4)"
+                onclick="interromper(4, true)"
                 style="display:none;">
             Encerrar aluguel
         </button>
@@ -672,7 +672,7 @@ button{
 
         <button id="btnEncerrar5"
                 class="btn-encerrar"
-                onclick="interromper(5)"
+                onclick="interromper(5, true)"
                 style="display:none;">
             Encerrar aluguel
         </button>
@@ -680,26 +680,6 @@ button{
     </div>
 
 </div>
-
-<h2 style="text-align:center;color:#0b2343;">Histórico de Aluguéis</h2>
-
-<table id="historico" style="width:95%;margin:20px auto;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,.1);">
-
-    <thead style="background:#0b2343;color:white;">
-        <tr>
-            <th>Triciclo</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Tempo</th>
-            <th>Valor</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-    </tbody>
-
-</table>
 
 
 
@@ -710,25 +690,17 @@ let horariosInicio = {};
 let fimContagem = {};
 let tempoPausado = {};
 let avisos = {};
+let historico = JSON.parse(localStorage.getItem("historico")) || [];
 
+function tocarAudio(numero, tipo){
 
-const alarme = new Audio("alarme.mp3");
+    console.log("Tocando:", tipo);
 
+    const audio = new Audio(`triciclo ${numero}/${tipo}T${numero}.mp3`);
 
-function falar(texto){
-
-    speechSynthesis.cancel();
-
-    const voz = new SpeechSynthesisUtterance(texto);
-
-    voz.lang = "pt-BR";
-    voz.rate = 1;
-    voz.pitch = 1;
-    voz.volume = 1;
-
-    speechSynthesis.speak(voz);
-
+    audio.play().catch(erro => console.log(erro));
 }
+
 
 function atualizarValor(numero){
 
@@ -810,22 +782,38 @@ segundos = Math.ceil(
 
 // Aviso de 2 minutos
 if(segundos <= 120 && !avisos[numero+"-2"]){
+
     avisos[numero+"-2"] = true;
-    falar("Atenção. Triciclo " + numero + ". Faltam dois minutos.");
+
+    tocarAudio(numero,"2min");
+
+    let historico = JSON.parse(localStorage.getItem("historico")) || [];
+
+    const agora = new Date();
+
+    const valor = document
+        .getElementById("valor"+numero)
+        .textContent
+        .replace("Valor:","")
+        .trim();
+
+    historico.push({
+        data: agora.toLocaleDateString("pt-BR"),
+        hora: agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),
+        triciclo: numero,
+        tempo: document.getElementById("minutos"+numero).value+" min",
+        valor: valor
+    });
+
+    localStorage.setItem("historico",JSON.stringify(historico));
+
+
 }
 
 // Aviso de 1 minuto
 if(segundos <= 60 && !avisos[numero+"-1"]){
     avisos[numero+"-1"] = true;
-    falar("Atenção. Triciclo " + numero + ". Falta um minuto.");
-}
-
-if(segundos === 120){
-    falar("Atenção. Triciclo " + numero + ". Faltam dois minutos.");
-}
-
-if(segundos === 60){
-    falar("Atenção. Triciclo " + numero + ". Falta um minuto.");
+    tocarAudio(numero,"1min");
 }
 
 
@@ -837,7 +825,7 @@ document.getElementById("tempo"+numero).textContent =
 
 salvarDados();
 
-if(segundos <= 60){
+if(segundos <= 10){
     document.getElementById("tempo"+numero).classList.add("alerta");
 }else{
     document.getElementById("tempo"+numero).classList.remove("alerta");
@@ -849,14 +837,8 @@ if(segundos <= 0){
     delete avisos[numero+"-2"];
 delete avisos[numero+"-1"];
 
-falar("Tempo encerrado. Triciclo " + numero + ".");
+tocarAudio(numero,"acabou");
 
-setTimeout(function(){
-
-    alarme.currentTime = 0;
-    alarme.play();
-
-},2500);
 
     delete fimContagem[numero];
 
@@ -944,33 +926,6 @@ function interromper(numero, registrar = false){
 
     document.getElementById("config"+numero).style.display="block";
 
-const fim = new Date();
-const inicio = new Date(horariosInicio[numero]);
-
-if(inicio && registrar){
-
-    const linha = document.createElement("tr");
-
-    linha.innerHTML=`
-        <td style="text-align:center;">${numero}</td>
-        <td style="text-align:center;">
-            ${inicio.getHours().toString().padStart(2,"0")}:
-            ${inicio.getMinutes().toString().padStart(2,"0")}
-        </td>
-        <td style="text-align:center;">
-            ${fim.getHours().toString().padStart(2,"0")}:
-            ${fim.getMinutes().toString().padStart(2,"0")}
-        </td>
-        <td style="text-align:center;">
-            ${document.getElementById("minutos"+numero).value} min
-        </td>
-        <td style="text-align:center;">
-            R$ ${document.getElementById("minutos"+numero).value},00
-        </td>
-    `;
-
-    document.querySelector("#historico tbody").prepend(linha);
-}
 
 delete horariosInicio[numero];
 delete fimContagem[numero];
@@ -989,12 +944,9 @@ function salvarDados(){
 
     localStorage.setItem("horariosInicio", JSON.stringify(horariosInicio));
 
-    localStorage.setItem(
-        "historico",
-        document.getElementById("historico").innerHTML
-    );
 
 }
+
 function atualizarResumo(){
 
     let disponivel = 0;
@@ -1030,15 +982,12 @@ if(document.getElementById("qtdDisponivel")){
 const fimSalvo = JSON.parse(localStorage.getItem("fimContagem") || "{}");
 const pausaSalva = JSON.parse(localStorage.getItem("tempoPausado") || "{}");
 const inicioSalvo = JSON.parse(localStorage.getItem("horariosInicio") || "{}");
-const historicoSalvo = localStorage.getItem("historico");
 
 fimContagem = fimSalvo;
 tempoPausado = pausaSalva;
 horariosInicio = inicioSalvo;
 
-if(historicoSalvo){
-    document.getElementById("historico").innerHTML = historicoSalvo;
-}
+
 
 for(let i=1;i<=5;i++){
 

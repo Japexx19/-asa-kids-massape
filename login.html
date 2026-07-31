@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Painel ADM</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0b2343;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.login{
+    width:350px;
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+
+h2{
+    text-align:center;
+    color:#0b2343;
+    margin-bottom:30px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#16a34a;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#15803d;
+}
+
+.erro{
+    color:red;
+    text-align:center;
+    margin-top:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login">
+
+<h2>Painel ADM</h2>
+
+<input
+type="text"
+id="usuario"
+placeholder="Usuário">
+
+<input
+type="password"
+id="senha"
+placeholder="Senha">
+
+<button onclick="entrar()">
+Entrar
+</button>
+
+<p id="erro" class="erro"></p>
+
+</div>
+
+<script>
+
+function entrar(){
+
+    const usuario=document.getElementById("usuario").value;
+    const senha=document.getElementById("senha").value;
+
+    if(usuario==="admin" && senha==="123456"){
+
+        localStorage.setItem("logado","sim");
+
+        window.location.href="admin.html";
+        
+
+    }else{
+
+        document.getElementById("erro").innerHTML="Usuário ou senha incorretos.";
+
+    }
+
+}
+
+
+</script>
+
+<script>
+
+function entrar(){
+
+    const usuario = document.getElementById("usuario").value;
+    const senha = document.getElementById("senha").value;
+
+    if(usuario === "admin" && senha === "123456"){
+
+        localStorage.setItem("logado","sim");
+        window.location.href = "admin.html";
+
+    }else{
+
+        document.getElementById("erro").innerHTML =
+        "Usuário ou senha incorretos.";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
